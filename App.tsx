@@ -34,7 +34,7 @@ export default function App() {
     "Drink",
   ];
 
-  const addItem = () => {
+  const validateForm = () => {
     setDishNameError("");
     setDescriptionError("");
     setCourseError("");
@@ -56,12 +56,16 @@ export default function App() {
       setPriceError("Price is required");
     }
 
-    if (
+    return (
       dishName.trim() !== "" &&
       description.trim() !== "" &&
       course !== "" &&
       price.trim() !== ""
-    ) {
+    );
+  };
+
+  const addItem = () => {
+    if (validateForm()) {
       const newItem = {
         dishName: dishName,
         description: description,
@@ -81,6 +85,12 @@ export default function App() {
         "Menu Updated",
         "Menu item has been successfully added."
       );
+    }
+  };
+
+  const done = () => {
+    if (validateForm()) {
+      setPage("home");
     }
   };
 
@@ -129,7 +139,10 @@ export default function App() {
             style={styles.input}
             placeholder="Enter dish name"
             value={dishName}
-            onChangeText={setDishName}
+            onChangeText={(text) => {
+              setDishName(text);
+              setDishNameError("");
+            }}
           />
 
           {dishNameError !== "" && (
@@ -146,7 +159,10 @@ export default function App() {
             style={styles.input}
             placeholder="Enter description"
             value={description}
-            onChangeText={setDescription}
+            onChangeText={(text) => {
+              setDescription(text);
+              setDescriptionError("");
+            }}
           />
 
           {descriptionError !== "" && (
@@ -188,6 +204,7 @@ export default function App() {
                     style={styles.courseOption}
                     onPress={() => {
                       setCourse(item);
+                      setCourseError("");
                       setShowCourses(false);
                     }}
                   >
@@ -207,7 +224,10 @@ export default function App() {
             placeholder="Enter price"
             keyboardType="numeric"
             value={price}
-            onChangeText={setPrice}
+            onChangeText={(text) => {
+              setPrice(text);
+              setPriceError("");
+            }}
           />
 
           {priceError !== "" && (
@@ -228,7 +248,7 @@ export default function App() {
             <View style={styles.bigSmallButton}>
               <Button
                 title="Done"
-                onPress={() => setPage("home")}
+                onPress={done}
               />
             </View>
 
