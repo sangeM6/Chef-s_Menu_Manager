@@ -62,20 +62,20 @@ export default function App() {
       course !== "" &&
       price.trim() !== ""
     ) {
-      setMenuItems([
-        ...menuItems,
-        {
-          dishName: dishName,
-          description: description,
-          course: course,
-          price: price,
-        },
-      ]);
+      const newItem = {
+        dishName: dishName,
+        description: description,
+        course: course,
+        price: price,
+      };
+
+      setMenuItems([...menuItems, newItem]);
 
       setDishName("");
       setDescription("");
       setCourse("");
       setPrice("");
+      setShowCourses(false);
 
       Alert.alert(
         "Menu Updated",
@@ -297,13 +297,6 @@ export default function App() {
             </View>
           )}
 
-          <View style={styles.bottomButton}>
-            <Button
-              title="Back to Home"
-              onPress={() => setPage("home")}
-            />
-          </View>
-
         </View>
       )}
 
@@ -438,10 +431,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 5,
-  },
-
-  bottomButton: {
-    marginTop: 15,
-    marginBottom: 10,
   },
 });
