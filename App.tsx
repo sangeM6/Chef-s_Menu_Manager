@@ -76,7 +76,7 @@ export default function App() {
 
           <Button
             title="View Menu"
-            onPress={() => {}}
+            onPress={() => setPage("menu")}
           />
         </View>
       )}
@@ -205,6 +205,36 @@ export default function App() {
         </View>
       )}
 
+      {page === "menu" && (
+        <View>
+          <Text style={styles.title}>
+            Menu
+          </Text>
+
+          <Text style={styles.emptyTitle}>
+            No menu items
+          </Text>
+
+          <Text style={styles.emptyMessage}>
+            There are currently no menu items to display.
+            Please add menu items to start managing your
+            restaurant menu.
+          </Text>
+
+          <Button
+            title="Add Menu Item"
+            onPress={() => setPage("add")}
+          />
+
+          <View style={styles.space} />
+
+          <Button
+            title="Back to Home"
+            onPress={() => setPage("home")}
+          />
+        </View>
+      )}
+
     </View>
   );
 }
@@ -288,5 +318,18 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     marginHorizontal: 5,
+  },
+
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 10,
+  },
+
+  emptyMessage: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 20,
   },
 });
