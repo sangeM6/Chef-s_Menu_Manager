@@ -7,6 +7,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 
 export default function App() {
@@ -16,7 +17,9 @@ export default function App() {
   const [description, setDescription] = useState("");
   const [course, setCourse] = useState("");
   const [price, setPrice] = useState("");
+
   const [showCourses, setShowCourses] = useState(false);
+  const [menuItems, setMenuItems] = useState<any[]>([]);
 
   const [dishNameError, setDishNameError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
@@ -31,7 +34,7 @@ export default function App() {
     "Drink",
   ];
 
-  const validateForm = () => {
+  const addItem = () => {
     setDishNameError("");
     setDescriptionError("");
     setCourseError("");
@@ -52,6 +55,33 @@ export default function App() {
     if (price.trim() === "") {
       setPriceError("Price is required");
     }
+
+    if (
+      dishName.trim() !== "" &&
+      description.trim() !== "" &&
+      course !== "" &&
+      price.trim() !== ""
+    ) {
+      setMenuItems([
+        ...menuItems,
+        {
+          dishName: dishName,
+          description: description,
+          course: course,
+          price: price,
+        },
+      ]);
+
+      setDishName("");
+      setDescription("");
+      setCourse("");
+      setPrice("");
+
+      Alert.alert(
+        "Menu Updated",
+        "Menu item has been successfully added."
+      );
+    }
   };
 
   return (
@@ -67,17 +97,21 @@ export default function App() {
             Manage your restaurant menu
           </Text>
 
-          <Button
-            title="Add Menu Item"
-            onPress={() => setPage("add")}
-          />
+          <View style={styles.bigButton}>
+            <Button
+              title="Add Menu Item"
+              onPress={() => setPage("add")}
+            />
+          </View>
 
           <View style={styles.space} />
 
-          <Button
-            title="View Menu"
-            onPress={() => setPage("menu")}
-          />
+          <View style={styles.bigButton}>
+            <Button
+              title="View Menu"
+              onPress={() => setPage("menu")}
+            />
+          </View>
         </View>
       )}
 
@@ -183,19 +217,21 @@ export default function App() {
           )}
 
           <View style={styles.row}>
-            <View style={styles.button}>
+
+            <View style={styles.bigSmallButton}>
               <Button
                 title="Add Item"
-                onPress={validateForm}
+                onPress={addItem}
               />
             </View>
 
-            <View style={styles.button}>
+            <View style={styles.bigSmallButton}>
               <Button
                 title="Done"
                 onPress={() => setPage("home")}
               />
             </View>
+
           </View>
 
           <Button
@@ -206,32 +242,68 @@ export default function App() {
       )}
 
       {page === "menu" && (
-        <View>
-          <Text style={styles.title}>
-            Menu
-          </Text>
+        <View style={styles.menuPage}>
 
-          <Text style={styles.emptyTitle}>
-            No menu items
-          </Text>
+          {menuItems.length === 0 && (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyTitle}>
+                No menu items
+              </Text>
 
-          <Text style={styles.emptyMessage}>
-            There are currently no menu items to display.
-            Please add menu items to start managing your
-            restaurant menu.
-          </Text>
+              <Text style={styles.emptyMessage}>
+                There are currently no menu items to display.
+                Please add menu items to start managing your
+                restaurant menu.
+              </Text>
 
-          <Button
-            title="Add Menu Item"
-            onPress={() => setPage("add")}
-          />
+              <View style={styles.bigButton}>
+                <Button
+                  title="Add Menu Item"
+                  onPress={() => setPage("add")}
+                />
+              </View>
+            </View>
+          )}
 
-          <View style={styles.space} />
+          {menuItems.length > 0 && (
+            <View style={styles.menuContent}>
+              <Text style={styles.title}>
+                Menu
+              </Text>
 
-          <Button
-            title="Back to Home"
-            onPress={() => setPage("home")}
-          />
+              <FlatList
+                data={menuItems}
+                keyExtractor={(_, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.menuItem}>
+                    <Text style={styles.dishName}>
+                      {item.dishName}
+                    </Text>
+
+                    <Text>
+                      {item.description}
+                    </Text>
+
+                    <Text>
+                      Course: {item.course}
+                    </Text>
+
+                    <Text>
+                      Price: R{item.price}
+                    </Text>
+                  </View>
+                )}
+              />
+            </View>
+          )}
+
+          <View style={styles.bottomButton}>
+            <Button
+              title="Back to Home"
+              onPress={() => setPage("home")}
+            />
+          </View>
+
         </View>
       )}
 
@@ -310,26 +382,66 @@ const styles = StyleSheet.create({
     borderBottomColor: "#EEEEEE",
   },
 
+  bigButton: {
+    minHeight: 50,
+    justifyContent: "center",
+  },
+
+  bigSmallButton: {
+    flex: 1,
+    minHeight: 50,
+    justifyContent: "center",
+    marginHorizontal: 5,
+  },
+
   row: {
     flexDirection: "row",
     marginBottom: 15,
   },
 
-  button: {
+  menuPage: {
     flex: 1,
-    marginHorizontal: 5,
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 15,
   },
 
   emptyTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
-    marginTop: 20,
-    marginBottom: 10,
+    marginBottom: 12,
   },
 
   emptyMessage: {
     fontSize: 16,
     lineHeight: 24,
-    marginBottom: 20,
+    textAlign: "center",
+    marginBottom: 25,
+  },
+
+  menuContent: {
+    flex: 1,
+  },
+
+  menuItem: {
+    backgroundColor: "#FFFFFF",
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 8,
+  },
+
+  dishName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+
+  bottomButton: {
+    marginTop: 15,
+    marginBottom: 10,
   },
 });
