@@ -5,6 +5,8 @@ import {
   Button,
   TextInput,
   StyleSheet,
+  FlatList,
+  TouchableOpacity,
 } from "react-native";
 
 export default function App() {
@@ -14,6 +16,15 @@ export default function App() {
   const [description, setDescription] = useState("");
   const [course, setCourse] = useState("");
   const [price, setPrice] = useState("");
+  const [showCourses, setShowCourses] = useState(false);
+
+  const courses = [
+    "Starter",
+    "Main Course",
+    "Dessert",
+    "Side Dish",
+    "Drink",
+  ];
 
   return (
     <View style={styles.container}>
@@ -74,12 +85,38 @@ export default function App() {
             Course
           </Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Select course"
-            value={course}
-            onChangeText={setCourse}
-          />
+          <TouchableOpacity
+            style={styles.dropdown}
+            onPress={() => setShowCourses(!showCourses)}
+          >
+            <Text>
+              {course || "Select course"}
+            </Text>
+
+            <Text style={styles.arrow}>
+              ▼
+            </Text>
+          </TouchableOpacity>
+
+          {showCourses && (
+            <View style={styles.courseList}>
+              <FlatList
+                data={courses}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.courseOption}
+                    onPress={() => {
+                      setCourse(item);
+                      setShowCourses(false);
+                    }}
+                  >
+                    <Text>{item}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          )}
 
           <Text style={styles.label}>
             Price
@@ -94,7 +131,6 @@ export default function App() {
           />
 
           <View style={styles.row}>
-
             <View style={styles.button}>
               <Button
                 title="Add Item"
@@ -108,7 +144,6 @@ export default function App() {
                 onPress={() => setPage("home")}
               />
             </View>
-
           </View>
 
           <Button
@@ -158,6 +193,35 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 15,
     borderRadius: 5,
+  },
+
+  dropdown: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
+    padding: 12,
+    marginBottom: 15,
+    borderRadius: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  arrow: {
+    fontSize: 14,
+  },
+
+  courseList: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
+    marginTop: -15,
+    marginBottom: 15,
+  },
+
+  courseOption: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
   },
 
   row: {
