@@ -8,6 +8,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Image,
 } from "react-native";
 
 export default function App() {
@@ -42,22 +43,22 @@ export default function App() {
 
     if (dishName.trim() === "") {
       setDishNameError("Dish name is required");
-      setTimeout(() => setDishNameError(""), 5000);
+      setTimeout(() => setDishNameError(""), 6000);
     }
 
     if (description.trim() === "") {
       setDescriptionError("Description is required");
-      setTimeout(() => setDescriptionError(""), 5000);
+      setTimeout(() => setDescriptionError(""), 6000);
     }
 
     if (course === "") {
       setCourseError("Please select a course");
-      setTimeout(() => setCourseError(""), 5000);
+      setTimeout(() => setCourseError(""), 6000);
     }
 
     if (price.trim() === "") {
       setPriceError("Price is required");
-      setTimeout(() => setPriceError(""), 5000);
+      setTimeout(() => setPriceError(""), 6000);
     }
 
     return (
@@ -106,6 +107,13 @@ export default function App() {
           <Text style={styles.title}>
             Chef's Menu Manager
           </Text>
+
+         
+
+          <Image
+            source={require("./assets/restaurant.png")}
+            style={styles.homeImage}
+          />
 
           <Text style={styles.subtitle}>
             Manage your restaurant menu
@@ -349,8 +357,16 @@ const styles = StyleSheet.create({
   },
 
   subtitle: {
-    fontSize: 16,
-    marginBottom: 30,
+    fontSize: 22,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+
+  homeImage: {
+    width: "100%",
+    height: 400,
+    borderRadius: 10,
+    marginBottom: 25,
   },
 
   space: {
