@@ -18,6 +18,11 @@ export default function App() {
   const [price, setPrice] = useState("");
   const [showCourses, setShowCourses] = useState(false);
 
+  const [dishNameError, setDishNameError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [courseError, setCourseError] = useState("");
+  const [priceError, setPriceError] = useState("");
+
   const courses = [
     "Starter",
     "Main Course",
@@ -25,6 +30,29 @@ export default function App() {
     "Side Dish",
     "Drink",
   ];
+
+  const validateForm = () => {
+    setDishNameError("");
+    setDescriptionError("");
+    setCourseError("");
+    setPriceError("");
+
+    if (dishName.trim() === "") {
+      setDishNameError("Dish name is required");
+    }
+
+    if (description.trim() === "") {
+      setDescriptionError("Description is required");
+    }
+
+    if (course === "") {
+      setCourseError("Please select a course");
+    }
+
+    if (price.trim() === "") {
+      setPriceError("Price is required");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -70,6 +98,12 @@ export default function App() {
             onChangeText={setDishName}
           />
 
+          {dishNameError !== "" && (
+            <Text style={styles.error}>
+              {dishNameError}
+            </Text>
+          )}
+
           <Text style={styles.label}>
             Description
           </Text>
@@ -80,6 +114,12 @@ export default function App() {
             value={description}
             onChangeText={setDescription}
           />
+
+          {descriptionError !== "" && (
+            <Text style={styles.error}>
+              {descriptionError}
+            </Text>
+          )}
 
           <Text style={styles.label}>
             Course
@@ -97,6 +137,12 @@ export default function App() {
               ▼
             </Text>
           </TouchableOpacity>
+
+          {courseError !== "" && (
+            <Text style={styles.error}>
+              {courseError}
+            </Text>
+          )}
 
           {showCourses && (
             <View style={styles.courseList}>
@@ -130,11 +176,17 @@ export default function App() {
             onChangeText={setPrice}
           />
 
+          {priceError !== "" && (
+            <Text style={styles.error}>
+              {priceError}
+            </Text>
+          )}
+
           <View style={styles.row}>
             <View style={styles.button}>
               <Button
                 title="Add Item"
-                onPress={() => {}}
+                onPress={validateForm}
               />
             </View>
 
@@ -191,8 +243,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#CCCCCC",
     padding: 12,
-    marginBottom: 15,
+    marginBottom: 5,
     borderRadius: 5,
+  },
+
+  error: {
+    color: "red",
+    marginBottom: 10,
   },
 
   dropdown: {
@@ -200,7 +257,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#CCCCCC",
     padding: 12,
-    marginBottom: 15,
+    marginBottom: 5,
     borderRadius: 5,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -214,7 +271,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#CCCCCC",
-    marginTop: -15,
     marginBottom: 15,
   },
 
