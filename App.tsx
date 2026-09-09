@@ -31,8 +31,7 @@ export default function App() {
     "Starter",
     "Main Course",
     "Dessert",
-    "Side Dish",
-    "Drink",
+    
   ];
 
   const validateForm = () => {
