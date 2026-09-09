@@ -42,18 +42,22 @@ export default function App() {
 
     if (dishName.trim() === "") {
       setDishNameError("Dish name is required");
+      setTimeout(() => setDishNameError(""), 5000);
     }
 
     if (description.trim() === "") {
       setDescriptionError("Description is required");
+      setTimeout(() => setDescriptionError(""), 5000);
     }
 
     if (course === "") {
       setCourseError("Please select a course");
+      setTimeout(() => setCourseError(""), 5000);
     }
 
     if (price.trim() === "") {
       setPriceError("Price is required");
+      setTimeout(() => setPriceError(""), 5000);
     }
 
     return (
@@ -237,7 +241,6 @@ export default function App() {
           )}
 
           <View style={styles.row}>
-
             <View style={styles.bigSmallButton}>
               <Button
                 title="Add Item"
@@ -251,7 +254,6 @@ export default function App() {
                 onPress={done}
               />
             </View>
-
           </View>
 
           <Button
@@ -294,6 +296,7 @@ export default function App() {
               <FlatList
                 data={menuItems}
                 keyExtractor={(_, index) => index.toString()}
+                contentContainerStyle={{ paddingBottom: 10 }}
                 renderItem={({ item }) => (
                   <View style={styles.menuItem}>
                     <Text style={styles.dishName}>
@@ -314,6 +317,13 @@ export default function App() {
                   </View>
                 )}
               />
+
+              <View style={styles.addAnotherButton}>
+                <Button
+                  title="Add Another Item"
+                  onPress={() => setPage("add")}
+                />
+              </View>
             </View>
           )}
 
@@ -450,6 +460,11 @@ const styles = StyleSheet.create({
   dishName: {
     fontSize: 18,
     fontWeight: "bold",
+    marginBottom: 5,
+  },
+
+  addAnotherButton: {
+    marginTop: 10,
     marginBottom: 5,
   },
 });
