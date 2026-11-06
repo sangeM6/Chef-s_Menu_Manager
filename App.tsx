@@ -11,6 +11,8 @@ import {
   Image,
 } from "react-native";
 
+
+
 export default function App() {
   const [page, setPage] = useState("home");
 
@@ -21,6 +23,17 @@ export default function App() {
 
   const [showCourses, setShowCourses] = useState(false);
   const [menuItems, setMenuItems] = useState<any[]>([]);
+  // Selected menu item
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  // Edit menu item information
+  const [editDishName, setEditDishName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editCourse, setEditCourse] = useState("");
+  const [editPrice, setEditPrice] = useState("");
+
+  // Edit course dropdown
+  const [showEditCourses, setShowEditCourses] = useState(false);
 
   const [dishNameError, setDishNameError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
@@ -97,6 +110,81 @@ export default function App() {
       setPage("home");
     }
   };
+  // Open selected menu item
+const openMenuItem = (index: number) => {
+  setSelectedIndex(index);
+  setPage("details");
+};
+
+// Open edit page
+const editItem = () => {
+  if (selectedIndex !== null) {
+    const item = menuItems[selectedIndex];
+
+    setEditDishName(item.dishName);
+    setEditDescription(item.description);
+    setEditCourse(item.course);
+    setEditPrice(item.price);
+
+    setPage("edit");
+  }
+};
+
+// Save changes
+const saveChanges = () => {
+  if (
+    editDishName.trim() === "" ||
+    editDescription.trim() === "" ||
+    editCourse === "" ||
+    editPrice.trim() === ""
+  ) {
+    Alert.alert("Missing Information", "Please complete all fields.");
+    return;
+  }
+
+  if (selectedIndex !== null) {
+    const updatedItems = [...menuItems];
+
+    updatedItems[selectedIndex] = {
+      dishName: editDishName,
+      description: editDescription,
+      course: editCourse,
+      price: editPrice,
+    };
+
+    setMenuItems(updatedItems);
+    setPage("menu");
+  }
+};
+
+// Delete menu item
+const deleteItem = () => {
+  Alert.alert(
+    "Delete Menu Item",
+    "Are you sure you want to delete this menu item?",
+    [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          if (selectedIndex !== null) {
+            const updatedItems = menuItems.filter(
+              (_, index) => index !== selectedIndex
+            );
+
+            setMenuItems(updatedItems);
+            setSelectedIndex(null);
+            setPage("menu");
+          }
+        },
+      },
+    ]
+  );
+};
 
   return (
     <View style={styles.container}>
@@ -135,7 +223,77 @@ export default function App() {
           </View>
         </View>
       )}
+      {/* MENU ITEM DETAILS PAGE */}
 
+      {page === "details" && selectedIndex !== null && (
+        <View>
+
+          <Text style={styles.title}>
+            Menu Item Details
+          </Text>
+
+          <View style={styles.menuItem}>
+
+            <Text style={styles.label}>
+              Dish Name
+            </Text>
+
+            <Text style={styles.detailText}>
+              {menuItems[selectedIndex].dishName}
+            </Text>
+
+            <Text style={styles.label}>
+              Course
+            </Text>
+
+            <Text style={styles.detailText}>
+              {menuItems[selectedIndex].course}
+            </Text>
+
+            <Text style={styles.label}>
+              Description
+            </Text>
+
+            <Text style={styles.detailText}>
+              {menuItems[selectedIndex].description}
+            </Text>
+
+            <Text style={styles.label}>
+              Price
+            </Text>
+
+            <Text style={styles.detailText}>
+              R{menuItems[selectedIndex].price}
+            </Text>
+
+        </View>
+
+        <View style={styles.row}>
+
+          <View style={styles.bigSmallButton}>
+            <Button
+              title="Edit"
+              onPress={editItem}
+            />
+          </View>
+
+          <View style={styles.bigSmallButton}>
+            <Button
+              title="Delete"
+              color="red"
+              onPress={deleteItem}
+            />
+          </View>
+
+        </View>
+
+        <Button
+          title="Back to Menu"
+          onPress={() => setPage("menu")}
+        />
+
+    </View>
+  )}
       {page === "add" && (
         <View>
           <Text style={styles.title}>
@@ -270,6 +428,110 @@ export default function App() {
         </View>
       )}
 
+      {/* EDIT MENU ITEM PAGE */}
+
+      {page === "edit" && (
+        <View>
+
+          <Text style={styles.title}>
+            Edit Menu Item
+          </Text>
+
+          <Text style={styles.label}>
+            Dish Name
+          </Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Enter dish name"
+            value={editDishName}
+            onChangeText={setEditDishName}
+          />
+
+          <Text style={styles.label}>
+            Description
+          </Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Enter description"
+            value={editDescription}
+            onChangeText={setEditDescription}
+          />
+
+          <Text style={styles.label}>
+            Course
+          </Text>
+
+          <TouchableOpacity
+            style={styles.dropdown}
+            onPress={() => setShowEditCourses(!showEditCourses)}
+          >
+            <Text>
+              {editCourse || "Select course"}
+            </Text>
+
+            <Text style={styles.arrow}>
+              ▼
+            </Text>
+          </TouchableOpacity>
+
+          {showEditCourses && (
+            <View style={styles.courseList}>
+              <FlatList
+                data={courses}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.courseOption}
+                  onPress={() => {
+                  setEditCourse(item);
+                  setShowEditCourses(false);
+                  }}
+                >
+                  <Text>{item}</Text>
+                </TouchableOpacity>
+                )}
+              />
+            </View>
+          )}
+
+          <Text style={styles.label}>
+            Price
+          </Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Enter price"
+            keyboardType="numeric"
+            value={editPrice}
+            onChangeText={setEditPrice}
+          />
+
+          <View style={styles.row}>
+
+            <View style={styles.bigSmallButton}>
+              <Button
+                title="Cancel"
+                onPress={() => {
+                setShowEditCourses(false);
+                setPage("menu");
+               }}
+              />
+            </View>
+
+            <View style={styles.bigSmallButton}>
+              <Button
+                title="Save Changes"
+                onPress={saveChanges}
+              />
+            </View>
+
+          </View>
+
+        </View>
+      )}
+
       {page === "menu" && (
         <View style={styles.menuPage}>
 
@@ -304,26 +566,24 @@ export default function App() {
                 data={menuItems}
                 keyExtractor={(_, index) => index.toString()}
                 contentContainerStyle={{ paddingBottom: 10 }}
-                renderItem={({ item }) => (
-                  <View style={styles.menuItem}>
+                renderItem={({ item, index }) => (
+                  <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => openMenuItem(index)}
+                  >
                     <Text style={styles.dishName}>
                       {item.dishName}
                     </Text>
 
-                    <Text>
-                      {item.description}
-                    </Text>
+                    <Text>{item.description}</Text>
 
-                    <Text>
-                      Course: {item.course}
-                    </Text>
+                    <Text>Course: {item.course}</Text>
 
-                    <Text>
-                      Price: R{item.price}
-                    </Text>
-                  </View>
-                )}
-              />
+                    <Text>Price: R{item.price}</Text>
+
+                  </TouchableOpacity>
+               )}
+             />
 
               <View style={styles.addAnotherButton}>
                 <Button
@@ -477,9 +737,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 5,
   },
+  detailText: {
+  fontSize: 16,
+  marginBottom: 15,
+},
 
   addAnotherButton: {
     marginTop: 10,
     marginBottom: 5,
   },
 });
+
