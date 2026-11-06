@@ -54,38 +54,40 @@ export default function App() {
   ];
 
   const validateForm = () => {
-    setDishNameError("");
-    setDescriptionError("");
-    setCourseError("");
-    setPriceError("");
+  setDishNameError("");
+  setDescriptionError("");
+  setCourseError("");
+  setPriceError("");
 
-    if (dishName.trim() === "") {
-      setDishNameError("Dish name is required");
-      setTimeout(() => setDishNameError(""), 6000);
-    }
+  let isValid = true;
 
-    if (description.trim() === "") {
-      setDescriptionError("Description is required");
-      setTimeout(() => setDescriptionError(""), 6000);
-    }
+  if (dishName.trim() === "") {
+    setDishNameError("Please enter a dish name.");
+    isValid = false;
+  }
 
-    if (course === "") {
-      setCourseError("Please select a course");
-      setTimeout(() => setCourseError(""), 6000);
-    }
+  if (description.trim() === "") {
+    setDescriptionError("Please enter a description.");
+    isValid = false;
+  }
 
-    if (price.trim() === "") {
-      setPriceError("Price is required");
-      setTimeout(() => setPriceError(""), 6000);
-    }
+  if (course === "") {
+    setCourseError("Please select a course.");
+    isValid = false;
+  }
 
-    return (
-      dishName.trim() !== "" &&
-      description.trim() !== "" &&
-      course !== "" &&
-      price.trim() !== ""
-    );
-  };
+  const priceNumber = Number(price);
+
+  if (price.trim() === "") {
+    setPriceError("Please enter a price.");
+    isValid = false;
+  } else if (!Number.isFinite(priceNumber) || priceNumber <= 0) {
+    setPriceError("Please enter a valid price greater than zero.");
+    isValid = false;
+  }
+
+  return isValid;
+};
 
   const addItem = () => {
     if (validateForm()) {
@@ -112,28 +114,39 @@ export default function App() {
   };
 
   const done = () => {
-    if (validateForm()) {
-      setPage("home");
-    }
+    setPage("menu");
   };
-  // Open selected menu item
+ // Open selected menu item
 const openMenuItem = (index: number) => {
+  if (index < 0 || index >= menuItems.length) {
+    Alert.alert("Error", "Menu item could not be found.");
+    return;
+  }
+
   setSelectedIndex(index);
   setPage("details");
 };
 
 // Open edit page
 const editItem = () => {
-  if (selectedIndex !== null) {
-    const item = menuItems[selectedIndex];
-
-    setEditDishName(item.dishName);
-    setEditDescription(item.description);
-    setEditCourse(item.course);
-    setEditPrice(item.price);
-
-    setPage("edit");
+  if (
+    selectedIndex === null ||
+    selectedIndex < 0 ||
+    selectedIndex >= menuItems.length
+  ) {
+    Alert.alert("Error", "Please select a valid menu item.");
+    setPage("menu");
+    return;
   }
+
+  const item = menuItems[selectedIndex];
+
+  setEditDishName(item.dishName);
+  setEditDescription(item.description);
+  setEditCourse(item.course);
+  setEditPrice(String(item.price));
+
+  setPage("edit");
 };
 
 // Save changes
@@ -205,6 +218,24 @@ const filteredItems = menuItems.filter((item: any) => {
   return matchesSearch && matchesCourse;
 
 });
+// Menu statistics
+
+const totalItems = menuItems.length;
+
+const totalPrice = menuItems.reduce(
+  (total, item) => total + (parseFloat(item.price) || 0),
+  0
+);
+
+const averagePrice =
+  totalItems > 0 ? totalPrice / totalItems : 0;
+
+const courseCounts = courses.map((courseName) => ({
+  course: courseName,
+  count: menuItems.filter(
+    (item) => item.course === courseName
+  ).length,
+}));
 
   return (
     <View style={styles.container}>
@@ -245,7 +276,7 @@ const filteredItems = menuItems.filter((item: any) => {
       )}
       {/* MENU ITEM DETAILS PAGE */}
 
-      {page === "details" && selectedIndex !== null && (
+      {page === "details" && selectedIndex !== null && selectedIndex >=0 && selectedIndex < menuItems.length && (
         <View>
 
           <Text style={styles.title}>
@@ -259,7 +290,7 @@ const filteredItems = menuItems.filter((item: any) => {
             </Text>
 
             <Text style={styles.detailText}>
-              {menuItems[selectedIndex].dishName}
+              {menuItems[selectedIndex]?.dishName || "No dish selected"}
             </Text>
 
             <Text style={styles.label}>
@@ -267,7 +298,7 @@ const filteredItems = menuItems.filter((item: any) => {
             </Text>
 
             <Text style={styles.detailText}>
-              {menuItems[selectedIndex].course}
+              {menuItems[selectedIndex]?.course || "No course selected"}
             </Text>
 
             <Text style={styles.label}>
@@ -275,7 +306,7 @@ const filteredItems = menuItems.filter((item: any) => {
             </Text>
 
             <Text style={styles.detailText}>
-              {menuItems[selectedIndex].description}
+              {menuItems[selectedIndex]?.description || "No description available"}
             </Text>
 
             <Text style={styles.label}>
@@ -283,7 +314,7 @@ const filteredItems = menuItems.filter((item: any) => {
             </Text>
 
             <Text style={styles.detailText}>
-              R{menuItems[selectedIndex].price}
+              {menuItems[selectedIndex]?.price != null ? `R${menuItems[selectedIndex].price}`: "No price available"}
             </Text>
 
         </View>
@@ -608,15 +639,60 @@ const filteredItems = menuItems.filter((item: any) => {
               <Text style={styles.title}>
                 Menu
               </Text>
+              {/* MENU STATISTICS */}
 
+              <View style={styles.statisticsContainer}>
+                <Text style={styles.statisticsTitle}>
+                  Menu Statistics
+                </Text>
+
+                <View style={styles.statisticsRow}>
+                  <Text style={styles.statisticsLabel}>
+                    Total Menu Items
+                  </Text>
+
+                  <Text style={styles.statisticsValue}>
+                    {totalItems}
+                  </Text>
+               </View>
+
+                <View style={styles.statisticsRow}>
+                  <Text style={styles.statisticsLabel}>
+                    Average Price
+                  </Text>
+
+                  <Text style={styles.statisticsValue}>
+                    R{averagePrice.toFixed(2)}
+                  </Text>
+                </View>
+
+                <Text style={styles.courseStatisticsTitle}>
+                  Items Per Course
+                </Text>
+
+                {courseCounts.map((item) => (
+                  <View
+                    key={item.course}
+                    style={styles.statisticsRow}
+                  >
+                    <Text style={styles.statisticsLabel}>
+                      {item.course}
+                    </Text>
+
+                    <Text style={styles.statisticsValue}>
+                      {item.count}
+                    </Text>
+               </View>
+              ))}
+          </View>
               <FlatList
                 data={filteredItems}
                 keyExtractor={(_, index) => index.toString()}
                 contentContainerStyle={{ paddingBottom: 10 }}
-                renderItem={({ item, index }) => (
+                renderItem={({ item }) => (
                   <TouchableOpacity
                     style={styles.menuItem}
-                    onPress={() => openMenuItem(menuItems.indexOf(index))}
+                    onPress={() => openMenuItem(menuItems.indexOf(item))}
                   >
                     <Text style={styles.dishName}>
                       {item.dishName}
@@ -798,5 +874,43 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5,
   },
+  statisticsContainer: {
+  backgroundColor: "#FFFFFF",
+  padding: 15,
+  marginBottom: 15,
+  borderRadius: 8,
+  borderWidth: 1,
+  borderColor: "#CCCCCC",
+},
+
+statisticsTitle: {
+  fontSize: 20,
+  fontWeight: "bold",
+  marginBottom: 15,
+},
+
+statisticsRow: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  paddingVertical: 8,
+  borderBottomWidth: 1,
+  borderBottomColor: "#EEEEEE",
+},
+
+statisticsLabel: {
+  fontSize: 15,
+},
+
+statisticsValue: {
+  fontSize: 15,
+  fontWeight: "bold",
+},
+
+courseStatisticsTitle: {
+  fontSize: 16,
+  fontWeight: "bold",
+  marginTop: 15,
+  marginBottom: 5,
+},
 });
 
