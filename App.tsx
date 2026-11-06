@@ -260,6 +260,7 @@ const courseCounts = courses.map((courseName) => ({
           <View style={styles.bigButton}>
             <Button
               title="Add Menu Item"
+              color="#f97316"
               onPress={() => setPage("add")}
             />
           </View>
@@ -269,6 +270,7 @@ const courseCounts = courses.map((courseName) => ({
           <View style={styles.bigButton}>
             <Button
               title="View Menu"
+              color="#f97316"
               onPress={() => setPage("menu")}
             />
           </View>
@@ -324,6 +326,7 @@ const courseCounts = courses.map((courseName) => ({
           <View style={styles.bigSmallButton}>
             <Button
               title="Edit"
+              color="#f97316"
               onPress={editItem}
             />
           </View>
@@ -331,7 +334,7 @@ const courseCounts = courses.map((courseName) => ({
           <View style={styles.bigSmallButton}>
             <Button
               title="Delete"
-              color="red"
+              color="#ec9557"
               onPress={deleteItem}
             />
           </View>
@@ -340,6 +343,7 @@ const courseCounts = courses.map((courseName) => ({
 
         <Button
           title="Back to Menu"
+          color="#f97316"
           onPress={() => setPage("menu")}
         />
 
@@ -378,6 +382,7 @@ const courseCounts = courses.map((courseName) => ({
           <TextInput
             style={styles.input}
             placeholder="Enter description"
+            placeholderTextColor="#bdbdbd"
             value={description}
             onChangeText={(text) => {
               setDescription(text);
@@ -442,6 +447,7 @@ const courseCounts = courses.map((courseName) => ({
           <TextInput
             style={styles.input}
             placeholder="Enter price"
+            placeholderTextColor="#bdbdbd"
             keyboardType="numeric"
             value={price}
             onChangeText={(text) => {
@@ -460,6 +466,7 @@ const courseCounts = courses.map((courseName) => ({
             <View style={styles.bigSmallButton}>
               <Button
                 title="Add Item"
+                color="#f97316"
                 onPress={addItem}
               />
             </View>
@@ -467,6 +474,7 @@ const courseCounts = courses.map((courseName) => ({
             <View style={styles.bigSmallButton}>
               <Button
                 title="Done"
+                color="#f97316"
                 onPress={done}
               />
             </View>
@@ -474,6 +482,7 @@ const courseCounts = courses.map((courseName) => ({
 
           <Button
             title="Cancel"
+            color="#f97316"
             onPress={() => setPage("home")}
           />
         </View>
@@ -494,6 +503,7 @@ const courseCounts = courses.map((courseName) => ({
 
           <TextInput
             style={styles.input}
+            placeholderTextColor="#bdbdbd"
             placeholder="Enter dish name"
             value={editDishName}
             onChangeText={setEditDishName}
@@ -506,6 +516,7 @@ const courseCounts = courses.map((courseName) => ({
           <TextInput
             style={styles.input}
             placeholder="Enter description"
+            placeholderTextColor="#bdbdbd"
             value={editDescription}
             onChangeText={setEditDescription}
           />
@@ -554,6 +565,7 @@ const courseCounts = courses.map((courseName) => ({
           <TextInput
             style={styles.input}
             placeholder="Enter price"
+            placeholderTextColor="#bdbdbd"
             keyboardType="numeric"
             value={editPrice}
             onChangeText={setEditPrice}
@@ -564,6 +576,7 @@ const courseCounts = courses.map((courseName) => ({
             <View style={styles.bigSmallButton}>
               <Button
                 title="Cancel"
+                color="#f97316"
                 onPress={() => {
                 setShowEditCourses(false);
                 setPage("menu");
@@ -574,6 +587,7 @@ const courseCounts = courses.map((courseName) => ({
             <View style={styles.bigSmallButton}>
               <Button
                 title="Save Changes"
+                color="f97316"
                 onPress={saveChanges}
               />
             </View>
@@ -601,6 +615,7 @@ const courseCounts = courses.map((courseName) => ({
               <View style={styles.bigButton}>
                 <Button
                   title="Add Menu Item"
+                  color="#f97316"
                   onPress={() => setPage("add")}
                 />
               </View>
@@ -609,7 +624,7 @@ const courseCounts = courses.map((courseName) => ({
 
           {menuItems.length > 0 && (
             <View style={styles.menuContent}>
-              <TextInput style={styles.input} placeholder="Search menu items..." value={searchText} onChangeText={setSearchText}/>
+              <TextInput style={styles.input} placeholder="Search menu items..." placeholderTextColor="#bdbdbd" value={searchText} onChangeText={setSearchText}/>
               {/*Filter by course*/ }
               <TouchableOpacity style={styles.dropdown} onPress={() => setShowFilterCourses(!showFilterCourses)}>
                 <Text>{selectedCourse}</Text>
@@ -630,7 +645,7 @@ const courseCounts = courses.map((courseName) => ({
                 </View>
               )}
               {/*Clear search and filter*/ }
-              <Button title="Clear Search & Filter" onPress={() => {
+              <Button title="Clear Search & Filter" color="#f97316" onPress={() => {
                 setSearchText("");
                 setSelectedCourse("All Courses");
                 setShowFilterCourses(false);
@@ -697,12 +712,15 @@ const courseCounts = courses.map((courseName) => ({
                     <Text style={styles.dishName}>
                       {item.dishName}
                     </Text>
-
-                    <Text>{item.description}</Text>
-
-                    <Text>Course: {item.course}</Text>
-
-                    <Text>Price: R{item.price}</Text>
+                    <Text style={styles.cardText}>
+                      <Text>{item.description}</Text>
+                    </Text>
+                    <Text style={styles.cardText}>
+                      <Text>Course: {item.course}</Text>
+                    </Text>
+                    <Text style={styles.cardPrice}>
+                      <Text>Price: R{item.price}</Text>
+                    </Text>
 
                   </TouchableOpacity>
                )}
@@ -716,6 +734,7 @@ const courseCounts = courses.map((courseName) => ({
               <View style={styles.addAnotherButton}>
                 <Button
                   title="Add Another Item"
+                  color="#f97316"
                   onPress={() => setPage("add")}
                 />
               </View>
@@ -734,19 +753,21 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 25,
     paddingTop: 70,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#171717",
   },
 
   title: {
     fontSize: 28,
     fontWeight: "bold",
     marginBottom: 10,
+    color:"#ffffff"
   },
 
   subtitle: {
     fontSize: 22,
     marginBottom: 20,
     alignItems: "center",
+    color:"#d1d5db"
   },
 
   homeImage: {
@@ -764,12 +785,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 5,
+    color:"#f97316"
   },
 
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#262626",
+    color:"#ffffff",
     borderWidth: 1,
-    borderColor: "#CCCCCC",
+    borderColor: "#f97315",
     padding: 12,
     marginBottom: 5,
     borderRadius: 5,
@@ -840,6 +863,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 12,
+    color:"#ffffff"
   },
 
   emptyMessage: {
@@ -847,6 +871,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     textAlign: "center",
     marginBottom: 25,
+    color:"#ffffff"
   },
 
   menuContent: {
@@ -854,20 +879,25 @@ const styles = StyleSheet.create({
   },
 
   menuItem: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#262626",
     padding: 15,
     marginBottom: 10,
     borderRadius: 8,
+    borderColor:"#404040",
+    borderWidth:1
   },
 
   dishName: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 5,
+    color:"#d1d5db"
   },
   detailText: {
   fontSize: 16,
   marginBottom: 15,
+  color:"#d1d5db",
+  lineHeight:24
 },
 
   addAnotherButton: {
@@ -912,5 +942,16 @@ courseStatisticsTitle: {
   marginTop: 15,
   marginBottom: 5,
 },
+cardText:{
+  fontSize:14,
+  color:"#d1d5db",
+  marginBottom:6,
+},
+cardPrice:{
+  fontSize:14,
+  color:"#ffffff",
+  fontWeight: "bold",
+  marginBottom:6,
+}
 });
 
