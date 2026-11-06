@@ -23,6 +23,12 @@ export default function App() {
 
   const [showCourses, setShowCourses] = useState(false);
   const [menuItems, setMenuItems] = useState<any[]>([]);
+
+  //Search and filter state
+  const [searchText, setSearchText] =useState("");
+  const [selectedCourse, setSelectedCourse] = useState("All Courses");
+  const [showFilterCourses, setShowFilterCourses] = useState(false);
+
   // Selected menu item
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -185,6 +191,20 @@ const deleteItem = () => {
     ]
   );
 };
+// Search and filter menu items
+const filteredItems = menuItems.filter((item: any) => {
+
+  const matchesSearch = item.dishName
+    .toLowerCase()
+    .includes(searchText.toLowerCase());
+
+  const matchesCourse =
+    selectedCourse === "All Courses" ||
+    item.course === selectedCourse;
+
+  return matchesSearch && matchesCourse;
+
+});
 
   return (
     <View style={styles.container}>
@@ -558,18 +578,45 @@ const deleteItem = () => {
 
           {menuItems.length > 0 && (
             <View style={styles.menuContent}>
+              <TextInput style={styles.input} placeholder="Search menu items..." value={searchText} onChangeText={setSearchText}/>
+              {/*Filter by course*/ }
+              <TouchableOpacity style={styles.dropdown} onPress={() => setShowFilterCourses(!showFilterCourses)}>
+                <Text>{selectedCourse}</Text>
+                <Text style={styles.arrow}>˯</Text>
+              </TouchableOpacity>
+              {showFilterCourses && (
+                <View style={styles.courseList}>
+                  <FlatList data={["All Courses", ...courses]} keyExtractor={(item) => item} renderItem={({item}) => (
+                    <TouchableOpacity style={styles.courseOption} onPress={() => {
+                      setSelectedCourse(item);
+                      setShowFilterCourses(false);
+                    }}
+                    >
+                      <Text>{item}</Text>
+                    </TouchableOpacity>
+                  )}
+                  />
+                </View>
+              )}
+              {/*Clear search and filter*/ }
+              <Button title="Clear Search & Filter" onPress={() => {
+                setSearchText("");
+                setSelectedCourse("All Courses");
+                setShowFilterCourses(false);
+              }}
+              />
               <Text style={styles.title}>
                 Menu
               </Text>
 
               <FlatList
-                data={menuItems}
+                data={filteredItems}
                 keyExtractor={(_, index) => index.toString()}
                 contentContainerStyle={{ paddingBottom: 10 }}
                 renderItem={({ item, index }) => (
                   <TouchableOpacity
                     style={styles.menuItem}
-                    onPress={() => openMenuItem(index)}
+                    onPress={() => openMenuItem(menuItems.indexOf(index))}
                   >
                     <Text style={styles.dishName}>
                       {item.dishName}
@@ -584,6 +631,11 @@ const deleteItem = () => {
                   </TouchableOpacity>
                )}
              />
+             {filteredItems.length === 0 && (
+              <Text style={styles.emptyMessage}>
+                No matching items found.
+              </Text>
+             )}
 
               <View style={styles.addAnotherButton}>
                 <Button
